@@ -4,24 +4,18 @@
   "description": "an unlock storage service",
   "main": "server.js",
   "scripts": {
-    "prod": "node -r ./src/utils/envLoader.js ./server.js",
-    "prestart": "yarn build",
-    "start": "node -r ./src/utils/envLoader.js ./build/server.js",
-    "predev": "NODE_ENV=development yarn db:migrate",
-    "dev": "tsc-watch --onSuccess 'yarn start' --onFailure 'echo Beep! Compilation Failed'",
-    "pretest": "NODE_ENV=test yarn run db:migrate",
-    "test": "jest --forceExit --runInBand",
+    "prod": "cd build && node -r ./src/utils/envLoader.js ./server.js",
+    "start": "yarn build && node -r ./src/utils/envLoader.js ./build/server.js",
+    "dev": "NODE_ENV=development yarn db:migrate && tsc-watch --onSuccess 'yarn start' --onFailure 'echo Beep! Compilation Failed'",
+    "test": "NODE_ENV=test yarn run db:migrate && jest --forceExit --runInBand",
     "lint": "eslint --resolve-plugins-relative-to ../packages/eslint-config --ext .ts,.js src/ __tests__/",
     "db:migrate": "sequelize --config ./config/sequelize.config.js db:migrate",
     "sequelize": "sequelize --config ./config/sequelize.config.js",
-    "preci": "yarn lint",
-    "ci": "yarn test",
+    "ci": "yarn lint && yarn test",
     "build": "tsc",
     "tsc": "tsc",
-    "predist": "yarn build",
-    "dist": "sh ./scripts/dist.sh",
-    "prefulfillment:prepare": "yarn build",
-    "fulfillment:prepare": "node ./scripts/fulfillment_prepare",
+    "dist": "yarn build && sh ./scripts/dist.sh",
+    "fulfillment:prepare": "yarn build && node ./scripts/fulfillment_prepare",
     "authorize": "./scripts/authorize-lock"
   },
   "lint-staged": {
@@ -34,8 +28,9 @@
   "dependencies": {
     "@sentry/node": "6.12.0",
     "@sentry/tracing": "6.12.0",
-    "@unlock-protocol/networks": "0.0.2",
-    "@unlock-protocol/unlock-js": "0.19.2",
+    "@types/random-words": "^1.1.2",
+    "@unlock-protocol/networks": "workspace:./packages/networks",
+    "@unlock-protocol/unlock-js": "workspace:./packages/unlock-js",
     "apollo-cache-inmemory": "1.6.6",
     "apollo-client": "2.6.10",
     "apollo-datasource-graphql": "1.3.2",
@@ -83,25 +78,26 @@
     "@types/express": "4.17.13",
     "@types/express-serve-static-core": "4.17.24",
     "@types/isomorphic-fetch": "0.0.35",
-    "@types/jest": "26.0.24",
+    "@types/jest": "27.0.2",
     "@types/nock": "10.0.3",
     "@types/node": "14.17.14",
     "@types/request-promise-native": "1.0.18",
     "@types/sequelize": "4.28.10",
     "@types/stripe": "8.0.416",
     "@types/supertest": "2.0.11",
-    "@unlock-protocol/eslint-config": "0.0.1",
+    "@unlock-protocol/eslint-config": "workspace:./packages/eslint-config",
+    "@unlock-protocol/tsconfig": "workspace:./packages/tsconfig",
     "aws-sdk": "2.981.0",
     "babel-jest": "27.1.0",
     "eslint": "7.32.0",
     "eslint-config-standard": "16.0.3",
-    "jest": "26.6.3",
+    "jest": "27.2.1",
     "nock": "13.1.3",
     "node-mocks-http": "1.10.1",
     "nodemon": "2.0.12",
     "run-script-os": "1.1.6",
     "supertest": "6.1.6",
-    "ts-jest": "26.5.6",
+    "ts-jest": "27.0.5",
     "tsc-watch": "4.5.0",
     "typescript": "4.4.2"
   },
@@ -109,5 +105,12 @@
     "testMatch": [
       "**/__tests__/**/*.test.js?(x)"
     ]
-  }
+  },
+  "files": [
+    "build",
+    "migrations",
+    "types",
+    "config",
+    "src"
+  ]
 }
